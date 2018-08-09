@@ -10,22 +10,31 @@ import { CirclesService } from '../circles.service';
 export class CanvasComponent implements OnInit, OnDestroy {
   running = false;
   circles: Array<Circle> = [];
-  height: number;
-  width: number;
+  sourceCircles: Array<Circle> = [];
+  canvasHeight: number;
+  canvasWidth: number;
 
-  constructor(private circlesService: CirclesService) {
-    this.circles = this.circlesService.circles;
-  }
+  constructor(private circlesService: CirclesService) { }
 
   ngOnInit() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
+    this.canvasWidth = window.innerWidth;
+    this.canvasHeight = window.innerHeight;
     this.running = true;
+    this.circles = this.getCircles();
+    this.sourceCircles = this.getSourceCircles();
     this.animationFrame();
   }
 
   ngOnDestroy() {
     this.running = false;
+  }
+
+  getCircles() {
+    return this.circlesService.circles;
+  }
+
+  getSourceCircles() {
+    return this.circlesService.sourceCircles;
   }
 
   toggleRunning() {
@@ -43,7 +52,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   getViewBox() {
-    return `0 0 ${this.width} ${this.height}`;
+    return `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
   }
 
 }

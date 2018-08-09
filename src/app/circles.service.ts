@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Circle } from './circle';
 
+const MAX_CIRCLES = 50;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,32 +19,46 @@ export class CirclesService {
     this.canvasWidth = window.innerWidth;
     this.canvasHeight = window.innerHeight;
 
-    for (let i = 0; i < 100; i += 1) {
+    for (let i = 0; i < MAX_CIRCLES; i++) {
+      // Prevent xMove and yMove from equal to zero at same time. Circles will move in all directions.
+      // Use OR in do-while loop for moving diagonally only.
+      // Use xm = 0 for moving vertically with AND in do-while loop.
+      // Use ym = 0 for moving horizontally with AND in do-while loop.
+      // Keep n in do-while loop to prevent unexpected infinit loop (if happened).
+      let xm, ym: number;
+      let n = 0;
+      do {
+        n++;
+        xm = this.randInt(-2, 2); // -2..2
+        ym = this.randInt(-2, 2); // -2..2
+      } while (xm === 0 && ym === 0 && n < 10); // if n < 1, this will allow static circles (circles not moving)
+
       // Make a circle object with push.
       this.sourceCircles.push({
-        x: this.randInt(this.canvasWidth), // 0..900
-        y: this.randInt(this.canvasHeight), // 0..500
-        radius: this.randInt(100) + 10, // 10..110
-        visible: false,
+        x: this.randInt(0, this.canvasWidth), // 0..canvasWidth
+        y: this.randInt(0, this.canvasHeight), // 0..canvasHeight
+        radius: this.randInt(10, 110), // 10..110
+        visible: true,
         color: 'rgba(128,128,128,0.5)',
 
         // Move on each frame
-        xMove: this.randInt(5) - 2, // -2..2
-        yMove: this.randInt(5) - 2	// -2..2
+        xMove: xm,
+        yMove: ym
       });
     }
 
     // NOT OPTIMAL -
-    // 4950 is quite a big number for something we need to be iterating on every frame.
+    // Total number of pairs is n*(n+1) / 2 - n. This is sum of 1+2+3+...+n=n*(n+1)/2 minus the diagnal which is n.
+    // for 100 circles there is 4950 pairs are quite a big number for something we need to be iterating on every frame.
     // Collision detection is in fact one of the bigger performance bottlenecks of this
     // project.  A more sophisticated implementation might use some kind of spatial index
     // or other optimization tricks to do collision detection with less effort.
-    for (let i = 0; i < this.sourceCircles.length - 1; i += 1) {
-      for (let j = i; j < this.sourceCircles.length - 1; j += 1) {
+    for (let i = 0; i < this.sourceCircles.length - 1; i++) {
+      for (let j = i; j < this.sourceCircles.length - 1; j++) {
         this.pairs.push([this.sourceCircles[i], this.sourceCircles[j + 1]]);
       }
     }
-
+    console.log(`Number of pairs for ${MAX_CIRCLES} elements is`, this.pairs.length);
   }
 
   update() {
@@ -54,7 +70,7 @@ export class CirclesService {
 
     for (const pair of this.pairs) {
       const [left, right] = pair;
-      const dist = this.distance(left, right);
+      const dist = this.getDistance(left, right);
       const overlap = dist - left.radius - right.radius;
 
       if (overlap < 0) {
@@ -64,12 +80,12 @@ export class CirclesService {
         const midY = (left.y + right.y) / 2;
 
         const radius = -overlap / 2;
-        let collisionCircle = this.circleMap.get(pair);
-        if (collisionCircle) {
+        let collisionCircle = this.circleMap.get(pair); // get collied circle if thier pair are previously overlaped.
+        if (collisionCircle) {  // if the overlap pair is previuosly overlaped then update collied circle values
           collisionCircle.x = midX;
           collisionCircle.y = midY;
           collisionCircle.radius = radius;
-        } else {
+        } else { // otherwise add the new collied circle to the display circles and to Map with pair as key and collied circle as value.
           collisionCircle = { x: midX, y: midY, radius };
           this.circles.push(collisionCircle);
           this.circleMap.set(pair, collisionCircle);
@@ -90,16 +106,16 @@ export class CirclesService {
           collisionCircle.color = `rgba(${red}, ${green}, ${blue}, 0.5)`;
         }
 
-      } else if (this.circleMap.has(pair)) {
+      } else if (this.circleMap.has(pair)) { // Remove collied circles if thier pair not more overlaped.
         this.circleMap.get(pair).visible = false;
       }
     }
   }
 
-
-  moveCircle(circle) {
+  moveCircle(circle: Circle) {
     circle.x += circle.xMove;
     circle.y += circle.yMove;
+
     if (circle.x > (this.canvasWidth + circle.radius)) {
       circle.x = 0 - circle.radius;
     }
@@ -116,14 +132,21 @@ export class CirclesService {
 
   // This is an application of the Pythagorean theorem that calculates the distance
   // between the centerpoints of two circles.
-  distance(circle1, circle2) {
+  getDistance(circle1: Circle, circle2: Circle) {
     return Math.sqrt(
       // The ** here is the ES7 exponentiation operator (https://github.com/rwaldron/exponentiation-operator)
       (circle2.x - circle1.x) ** 2 + (circle2.y - circle1.y) ** 2
     );
   }
 
-  randInt(max) {
-    return Math.floor(Math.random() * max);
+  // randInt - return random integer number between [min, max]
+  // Math.random function return random number in interval [0,1).
+  // In order to return random number between two number min and max we increase max by 1.
+  randInt(min = 0, max = 1) {
+    if (min > max) {
+      [min, max] = [max, min]; // swap variables - using Destructuring feature of Typescript
+    }
+    console.log(`[min, max] = [${min} , ${max}]`);
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 }
