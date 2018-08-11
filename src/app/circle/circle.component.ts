@@ -18,5 +18,4 @@ export class CircleComponent {
   getDisplay() {
     return (this.visible ? 'inherit' : 'none');
   }
-
 }

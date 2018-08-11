@@ -22,7 +22,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.running = true;
     this.circles = this.getCircles();
     this.sourceCircles = this.getSourceCircles();
-    this.animationFrame();
+    this.animateFrame();
   }
 
   ngOnDestroy() {
@@ -40,19 +40,18 @@ export class CanvasComponent implements OnInit, OnDestroy {
   toggleRunning() {
     this.running = !this.running;
     if (this.running) {
-      this.animationFrame();
+      this.animateFrame();
     }
   }
 
-  animationFrame() {
+  animateFrame() {
     this.circlesService.update();
     if (this.running) {
-      requestAnimationFrame(() => this.animationFrame());
+      requestAnimationFrame(() => this.animateFrame());
     }
   }
 
   getViewBox() {
     return `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
   }
-
 }

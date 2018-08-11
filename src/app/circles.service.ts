@@ -29,15 +29,15 @@ export class CirclesService {
       let n = 0;
       do {
         n++;
-        xm = this.randInt(-2, 2); // -2..2
-        ym = this.randInt(-2, 2); // -2..2
+        xm = this.randomInt(-2, 2); // -2..2
+        ym = this.randomInt(-2, 2); // -2..2
       } while (xm === 0 && ym === 0 && n < 10); // if n < 1, this will allow static circles (circles not moving)
 
       // Make a circle object with push.
       this.sourceCircles.push({
-        x: this.randInt(0, this.canvasWidth), // 0..canvasWidth
-        y: this.randInt(0, this.canvasHeight), // 0..canvasHeight
-        radius: this.randInt(10, 110), // 10..110
+        x: this.randomInt(0, this.canvasWidth), // 0..canvasWidth
+        y: this.randomInt(0, this.canvasHeight), // 0..canvasHeight
+        radius: this.randomInt(10, 110), // 10..110
         visible: true,
         color: 'rgba(128,128,128,0.5)',
 
@@ -139,10 +139,11 @@ export class CirclesService {
     );
   }
 
-  // randInt - return random integer number between [min, max]
-  // Math.random function return random number in interval [0,1).
+  // randomInt - return random integer number between [min, max].
+  // Math.random function return random number in interval [0, 1).
+  // If no paramters randomInt() return integer random number between [0, 1].
   // In order to return random number between two number min and max we increase max by 1.
-  randInt(min = 0, max = 1) {
+  randomInt(min = 0, max = 1) {
     if (min > max) {
       [min, max] = [max, min]; // swap variables - using Destructuring feature of Typescript
     }
