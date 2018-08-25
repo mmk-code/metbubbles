@@ -38,7 +38,7 @@ export class CirclesService {
         x: this.randomInt(0, this.canvasWidth), // 0..canvasWidth
         y: this.randomInt(0, this.canvasHeight), // 0..canvasHeight
         radius: this.randomInt(10, 110), // 10..110
-        visible: true,
+        visible: true,  // it sould be false as program logic do not show the source circles.
         color: 'rgba(128,128,128,0.5)',
 
         // Move on each frame
@@ -48,8 +48,9 @@ export class CirclesService {
     }
 
     // NOT OPTIMAL -
-    // Total number of pairs is n*(n+1) / 2 - n. This is sum of 1+2+3+...+n=n*(n+1)/2 minus the diagnal which is n.
-    // for 100 circles there is 4950 pairs are quite a big number for something we need to be iterating on every frame.
+    // Total number of pairs is n*(n+1) / 2 - n. This is sum of 1+2+3+...+n=n*(n+1)/2 minus the diagnal
+    // which is n (The circle cannot be not neighbor to itself). For 100 circles there is 4950 pairs
+    // are quite a big number for something we need to be iterating on every frame.
     // Collision detection is in fact one of the bigger performance bottlenecks of this
     // project.  A more sophisticated implementation might use some kind of spatial index
     // or other optimization tricks to do collision detection with less effort.
@@ -147,7 +148,7 @@ export class CirclesService {
     if (min > max) {
       [min, max] = [max, min]; // swap variables - using Destructuring feature of Typescript
     }
-    console.log(`[min, max] = [${min} , ${max}]`);
+    // console.log(`[min, max] = [${min} , ${max}]`);
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 }
