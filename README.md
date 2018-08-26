@@ -10,12 +10,12 @@ The original project was written and explained by Tero Parviainen on his webpage
 
 ## How it Work
 
-The project consists of single Angular module with main Angular component, another two Angular components and one Angular service.  The first component with class name canvasComponent creates the screen canvas to control the display and generates the circles (Metabubbles) by calling the second component with class name circleComponent. The service with class name circlesService does the heavy-weight lifting of calculation to maintain two arrays of circles. The first array sourceCircles[] creates random number of circles (bubbles) of different sizes and locations. The second array circles[] will be generated as result of collision between the circles in first array and creates the Metabubbles.
+The project consists of single Angular module with main Angular component, another two Angular components and one Angular service.  The first component with class name ___CanvasComponent___ creates the screen canvas to control the display and generates the circles (Metabubbles) by calling the second component with class name ___CircleComponent___. The service with class name ___CirclesService___ does the heavy-weight lifting of calculation to maintain two arrays of circles. The first array _sourceCircles_[] creates random number of circles (bubbles) of different sizes and locations. The second array _circles_[] will be generated as result of collision between the circles in first array and creates the Metabubbles.
 The Metabubbles changes their size as result of the distance between the centers of two collided circles. As the collided circles get away from each other the Metabubbles get vanished and disappeared from canvas.
 
 ## Development
 
-This project was generated with [Angular CLI] (https://github.com/angular/angular-cli) version 6.1.5.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.5.
 
 ### Development server
 
