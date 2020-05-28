@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Circle } from './circle';
 
-const MAX_CIRCLES = 50;
+const MAX_CIRCLES = 100;
+
+type Pair = {p: Circle, q: Circle};
 
 @Injectable({
   providedIn: 'root'
 })
 export class CirclesService {
-  circleMap: Map<any, any> = new Map<any, any>();
+  circleMap: Map<Pair, Circle> = new Map<Pair, Circle>();
   circles: Array<Circle> = [];
   sourceCircles: Array<Circle> = [];
-  pairs: Array<any> = [];
+  pairs: Array<Pair> = [];
   timeStep = 0;
   canvasWidth: number;
   canvasHeight: number;
@@ -25,7 +27,8 @@ export class CirclesService {
       // Use xm = 0 for moving vertically with AND in do-while loop.
       // Use ym = 0 for moving horizontally with AND in do-while loop.
       // Keep n in do-while loop to prevent unexpected infinit loop (if happened).
-      let xm, ym: number;
+      let xm: number;
+      let ym: number;
       let n = 0;
       do {
         n++;
@@ -56,7 +59,7 @@ export class CirclesService {
     // or other optimization tricks to do collision detection with less effort.
     for (let i = 0; i < this.sourceCircles.length - 1; i++) {
       for (let j = i; j < this.sourceCircles.length - 1; j++) {
-        this.pairs.push([this.sourceCircles[i], this.sourceCircles[j + 1]]);
+        this.pairs.push({p: this.sourceCircles[i], q: this.sourceCircles[j + 1]});
       }
     }
     console.log(`Number of pairs for ${MAX_CIRCLES} elements is`, this.pairs.length);
@@ -70,7 +73,8 @@ export class CirclesService {
     }
 
     for (const pair of this.pairs) {
-      const [left, right] = pair;
+      const left = pair.p;
+      const right = pair.q;
       const dist = this.getDistance(left, right);
       const overlap = dist - left.radius - right.radius;
 
