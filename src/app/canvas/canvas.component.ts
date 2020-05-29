@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Circle } from '../circle';
 import { CirclesService } from '../circles.service';
 
@@ -53,5 +53,25 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   getViewBox() {
     return `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
+  }
+
+  @HostListener('window:resize', ['$event']) onResize(event) {
+    this.refresh();
+
+    // debounce resize, wait for resize to finish before doing stuff
+    // if (this.resizeTimeout) {
+    //   clearTimeout(this.resizeTimeout);
+    // }
+    // this.resizeTimeout = setTimeout((() => {
+    //   console.log('Resize complete');
+    //   this.refresh();
+    // }).bind(this), 500);
+  }
+
+  refresh() {
+    window.location.reload();
+    this.canvasWidth = window.innerWidth;
+    this.canvasHeight = window.innerHeight;
+    this.circlesService.refresh();
   }
 }

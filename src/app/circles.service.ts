@@ -155,4 +155,9 @@ export class CirclesService {
     // console.log(`[min, max] = [${min} , ${max}]`);
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+
+  refresh() {
+    this.canvasWidth = window.innerWidth;
+    this.canvasHeight = window.innerHeight;
+  }
 }
